@@ -1,0 +1,13 @@
+/application/logs
+/application/config/email.php
+/application/config/config.php
+/application/config/database.php
+/node_modules
+/nbproject
+*.zip
+migrateCertificate2.sql
+migrateCertificate3.sql
+migrateCertificate1.sql
+/assets/*.pdf
+/assets/logos/*
+/assets/img/*.ai
