@@ -1,6 +1,6 @@
 <table>
     <tr style="font-size:10px;">
-        <td>
+        <td style="width: 240px;">
             <img src="<?= base_url('assets/logos/' . $pdv->getPdvId() . '.png'); ?>" style="height:40px;">
             <br><?php
             echo $pdv->getPdvAdresse1();
@@ -31,16 +31,16 @@
         </td>
         <td style = "text-align: right;">
 
-            <table style="width:270px;" cellspacing="0" border="1" cellpadding="2">
+            <table style="width:300px;" cellspacing="0" border="1" cellpadding="2">
                 <tr>
                     <td colspan="3" style="text-align: center; font-weight: bold; height: 20px; font-size:15px;">
                         FACTURE
                     </td>
                 </tr>
                 <tr style="background-color: lightgrey; text-align: center; font-weight: bold;">
-                    <td style="width: 90px;">N° facture</td>
-                    <td style="width: 90px;">Date</td>
-                    <td style="width: 90px;">Echéance</td>
+                    <td style="width: 100px;">N° facture</td>
+                    <td style="width: 100px;">Date</td>
+                    <td style="width: 100px;">Echéance</td>
                 </tr>
                 <tr style="text-align: center;">
                     <td style=" height: 20px;"><?= $facture->getFactureId(); ?></td>
@@ -48,24 +48,26 @@
                     <td><?= date('d/m/Y', $facture->getFactureEcheance()); ?></td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="font-size: 13px;">
+                    <td colspan="3" style="font-size: 12px;">
                         <span style="font-size:9px;">
                             <?= 'Téléphone: ' . $facture->getFactureClient()->getClientTel() . ' - Portable: ' . $facture->getFactureClient()->getClientPortable(); ?>
                         </span>
                         <br>
                         <br>
+                        <br>
                         <?php
                         if ($facture->getFactureClient()->getClientType() == 1):
-                            echo $facture->getFactureClient()->getClientNom() . ' ' . $facture->getFactureClient()->getClientPrenom() . '<br>';
+                            echo $facture->getFactureClient()->getClientNom() . ' ' . $facture->getFactureClient()->getClientPrenom() . '<span style="color:#FFF;">____</span><br>';
                         else:
-                            echo $facture->getFactureClient()->getClientRaisonSociale() . '<br>';
+                            echo $facture->getFactureClient()->getClientRaisonSociale() . '<span style="color:#FFF;">____</span><br>';
                         endif;
-                        echo $facture->getFactureClient()->getClientAdresse1();
+                        echo $facture->getFactureClient()->getClientAdresse1() . '<span style="color:#FFF;">____</span>';
                         if ($facture->getFactureClient()->getClientAdresse2()):
-                            echo '<br>' . $facture->getFactureClient()->getClientAdresse2();
+                            echo '<br>' . $facture->getFactureClient()->getClientAdresse2() . '<span style="color:#FFF;">____</span>';
                         endif;
-                        echo '<br>' . $facture->getFactureClient()->getClientCp() . ' ' . $facture->getFactureClient()->getClientVille();
+                        echo '<br>' . $facture->getFactureClient()->getClientCp() . ' ' . $facture->getFactureClient()->getClientVille() . '<span style="color:#FFF;">____</span>';
                         ?>
+
                     </td>
                 </tr>
 

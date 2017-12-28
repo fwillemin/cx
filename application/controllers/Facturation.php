@@ -21,7 +21,7 @@ class Facturation extends My_Controller {
      */
     public function blNonFactures() {
 
-        $bls = $this->managerBls->liste(array('blFactureId' => null), 'c.clientId, bdc.bdcId ASC');
+        $bls = $this->managerBls->liste(array('blFactureId' => null, 'blDelete' => 0), 'c.clientId, bdc.bdcId ASC');
         if (!empty($bls)) :
             foreach ($bls as $b) :
                 $b->hydrateClient();

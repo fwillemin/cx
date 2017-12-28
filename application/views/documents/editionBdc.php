@@ -1,6 +1,6 @@
 <table>
     <tr style="font-size:10px;">
-        <td>
+        <td style="width: 240px;">
             <img src="<?= base_url('assets/logos/' . $pdv->getPdvId() . '.png'); ?>" style="height:40px;">
             <br><?php
             echo $pdv->getPdvAdresse1();
@@ -31,16 +31,16 @@
         </td>
         <td style = "text-align: right;">
 
-            <table style="width:270px;" cellspacing="0" border="1" cellpadding="2">
+            <table style="width:300px;" cellspacing="0" border="1" cellpadding="2">
                 <tr>
                     <td colspan="3" style="text-align: center; font-weight: bold; height: 20px; font-size:15px;">
                         BON DE COMMANDE
                     </td>
                 </tr>
                 <tr style="background-color: lightgrey; text-align: center; font-weight: bold;">
-                    <td style="width: 90px;">N° commande</td>
-                    <td style="width: 90px;">Date</td>
-                    <td style="width: 90px;">Servi par</td>
+                    <td style="width: 100px;">N° commande</td>
+                    <td style="width: 100px;">Date</td>
+                    <td style="width: 100px;">Servi par</td>
                 </tr>
                 <tr style="text-align: center;">
                     <td style=" height: 20px;"><?= $bdc->getBdcId(); ?></td>
@@ -56,15 +56,15 @@
                         <br>
                         <?php
                         if ($bdc->getBdcClient()->getClientType() == 1):
-                            echo $bdc->getBdcClient()->getClientNom() . ' ' . $bdc->getBdcClient()->getClientPrenom() . '<br>';
+                            echo $bdc->getBdcClient()->getClientNom() . ' ' . $bdc->getBdcClient()->getClientPrenom() . '<span style="color:#FFF;">____</span><br>';
                         else:
-                            echo $bdc->getBdcClient()->getClientRaisonSociale() . '<br>';
+                            echo $bdc->getBdcClient()->getClientRaisonSociale() . '<span style="color:#FFF;">____</span><br>';
                         endif;
-                        echo $bdc->getBdcClient()->getClientAdresse1();
+                        echo $bdc->getBdcClient()->getClientAdresse1() . '<span style="color:#FFF;">____</span>';
                         if ($bdc->getBdcClient()->getClientAdresse2()):
-                            echo '<br>' . $bdc->getBdcClient()->getClientAdresse2();
+                            echo '<br>' . $bdc->getBdcClient()->getClientAdresse2() . '<span style="color:#FFF;">____</span>';
                         endif;
-                        echo '<br>' . $bdc->getBdcClient()->getClientCp() . ' ' . $bdc->getBdcClient()->getClientVille();
+                        echo '<br>' . $bdc->getBdcClient()->getClientCp() . ' ' . $bdc->getBdcClient()->getClientVille() . '<span style="color:#FFF;">____</span>';
                         ?>
                     </td>
                 </tr>

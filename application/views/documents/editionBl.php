@@ -1,6 +1,6 @@
 <table>
     <tr style="font-size:10px;">
-        <td>
+        <td style="width: 240px;">
             <img src="<?= base_url('assets/logos/' . $pdv->getPdvId() . '.png'); ?>" style="height:40px;">
             <br><?php
             echo $pdv->getPdvAdresse1();
@@ -31,15 +31,15 @@
         </td>
         <td style = "text-align: right;">
 
-            <table style="width:260px;" cellspacing="0" border="1" cellpadding="2">
+            <table style="width:300px;" cellspacing="0" border="1" cellpadding="2">
                 <tr>
                     <td colspan="2" style="text-align: center; font-weight: bold; height: 20px; font-size:15px;">
                         BON DE LIVRAISON
                     </td>
                 </tr>
                 <tr style="background-color: lightgrey; text-align: center; font-weight: bold;">
-                    <td style="width: 130px;">N° livraison</td>
-                    <td style="width: 130px;">Date</td>
+                    <td style="width: 150px;">N° livraison</td>
+                    <td style="width: 150px;">Date</td>
                 </tr>
                 <tr style="text-align: center;">
                     <td style=" height: 20px;"><?= $bl->getBlId(); ?></td>
@@ -54,15 +54,15 @@
                         <br>
                         <?php
                         if ($client->getClientType() == 1):
-                            echo $client->getClientNom() . ' ' . $client->getClientPrenom() . '<br>';
+                            echo $client->getClientNom() . ' ' . $client->getClientPrenom() . '<span style="color:#FFF;">____</span><br>';
                         else:
-                            echo $client->getClientRaisonSociale() . '<br>';
+                            echo $client->getClientRaisonSociale() . '<span style="color:#FFF;">____</span><br>';
                         endif;
-                        echo $client->getClientAdresse1();
+                        echo $client->getClientAdresse1() . '<span style="color:#FFF;">____</span>';
                         if ($client->getClientAdresse2()):
-                            echo '<br>' . $client->getClientAdresse2();
+                            echo '<br>' . $client->getClientAdresse2() . '<span style="color:#FFF;">____</span>';
                         endif;
-                        echo '<br>' . $client->getClientCp() . ' ' . $client->getClientVille();
+                        echo '<br>' . $client->getClientCp() . ' ' . $client->getClientVille() . '<span style="color:#FFF;">____</span>';
                         ?>
 
 
@@ -143,7 +143,7 @@
             ?>
         </td>
         <td style="width: 350px;">
-<?php if ($chiffrage): ?>
+            <?php if ($chiffrage): ?>
                 <table class="table" style="font-size:12px;">
                     <tr>
                         <td style="width:200px; text-align:right;">Total HT</td>
@@ -183,7 +183,7 @@
                         </td>
                     </tr>
                 </table>
-<?php endif; ?>
+            <?php endif; ?>
         </td>
     </tr>
     <tr style="font-size:10px;">
