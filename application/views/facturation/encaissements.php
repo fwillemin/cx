@@ -70,14 +70,16 @@
                                 <td style="text-align: right;"><?= '-' . number_format($a->getAvoirTotalTVA(), 2, ',', ' '); ?></td>
                             </tr>
                         <?php endforeach; ?>
-                        <tr>
-                            <td colspan="3" style="text-align: right; font-weight: bold;">Totaux</td>
-                            <td style="text-align: right; width:80px; font-weight: bold;"><?= number_format($totalHTPeriode, 2, ',', ' ') . '€'; ?></td>
-                            <td style="text-align: right; width:80px; font-weight: bold;"><?= number_format($totalTVAPeriode, 2, ',', ' ') . '€'; ?></td>
-                        </tr>
                     <?php endif;
                     ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" style="text-align: right; font-weight: bold;">Totaux</td>
+                        <td style="text-align: right; font-weight: bold;"><?= number_format($totalHTPeriode, 2, ',', ' ') . '€'; ?></td>
+                        <td style="text-align: right; font-weight: bold;"><?= number_format($totalTVAPeriode, 2, ',', ' ') . '€'; ?></td>
+                    </tr>
+                </tfoot>
             </table>
 
         </div>
@@ -95,7 +97,7 @@
                         <th>Type</th>
                         <th>Fact</th>
                         <th>Client</th>
-                        <th>Total</th>
+                        <th style="text-align: right;">Total</th>
                         <th>Mode</th>
                     </tr>
                 </thead>
@@ -106,6 +108,7 @@
                     $totalESP = 0;
                     $totalVIR = 0;
                     $totalTRA = 0;
+                    $total = 0;
                     if (!empty($reglements)):
                         foreach ($reglements as $r):
                             switch ($r->getReglementModeId()):
@@ -125,6 +128,7 @@
                                     $totalVIR += $r->getReglementMontant();
                                     break;
                             endswitch;
+                            $total += $r->getReglementMontant();
                             ?>
                             <tr>
                                 <td>
@@ -158,7 +162,7 @@
                                         ?>
                                     </a>
                                 </td>
-                                <td><?= number_format($r->getReglementMontant(), 2, ',', ' ') . '€'; ?></td>
+                                <td style="text-align: right;"><?= number_format($r->getReglementMontant(), 2, ',', ' ') . '€'; ?></td>
                                 <td><?= $r->getReglementMode()->getModeReglementNom(); ?></td>
                             </tr>
                             <?php
@@ -170,7 +174,7 @@
             <h4>Totaux de la période</h4>
             <table class="table table-condensed table-bordered table-striped">
                 <tr>
-                    <td rowspan="5" style="width: 70%;">
+                    <td rowspan="6" style="width: 70%;">
                         <div class="row">
                             <div class="col-sm-12">
                                 <canvas id="graphEncaissements" style="height: 150px; width: 200px; margin: 0 auto">
@@ -179,6 +183,10 @@
                             </div>
                         </div>
                     </td>
+                    <td><strong>Total</strong></td>
+                    <td style="text-align:right; font-weight: bold;"><?= number_format($total, 2, ',', ' ') . '€'; ?></td>
+                </tr>
+                <tr>
                     <td>Espèces</td>
                     <td style="text-align:right;"><?= number_format($totalESP, 2, ',', ' ') . '€'; ?></td>
                 </tr>

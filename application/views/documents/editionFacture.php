@@ -135,12 +135,19 @@
 <table style="font-size:11px;">
     <tr>
         <td rowspan="4" style="width: 200px;">
-            <?php
-            if (!empty($facture->getFactureReglements())):
-                foreach ($facture->getFactureReglements() as $r)
-                    echo '<tr><td>' . date('d/m/Y', $r->getReglementDate()) . '</td><td>' . $this->cxwork->affModeReglement($r->getReglementModeId()) . '</td><td>' . number_format($r->getReglementTotal(), 2, ',', ' ') . '€</td></tr>';
-            endif;
-            ?>
+            <table class="table table-bordered" style="font-size:10px;">
+                <tr>
+                    <td colspan="3" style="border-bottom: 1px solid gray;">
+                        Réglements encaissés
+                    </td>
+                </tr>
+                <?php
+                if (!empty($facture->getFactureReglements())):
+                    foreach ($facture->getFactureReglements() as $r)
+                        echo '<tr><td>' . date('d/m/Y', $r->getReglementDate()) . '</td><td>' . $this->cxwork->affModeReglement($r->getReglementModeId()) . '</td><td>' . number_format($r->getReglementMontant(), 2, ',', ' ') . '€</td></tr>';
+                endif;
+                ?>
+            </table>
         </td>
         <td style="width:200px; text-align:right;">Total HT</td>
         <td style="text-align:right; width:130px; border-bottom:1px solid grey;"><?php echo number_format($facture->getFactureTotalHT(), 2, ',', ' ') . '€'; ?></td>

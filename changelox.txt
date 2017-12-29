@@ -1,3 +1,8 @@
+>>> V2.0.2
+Ajout de la TVA sur l'édition des devis
+Ajout du détail des réglements sur les factures
+Ajout des totaux de période dans le journal des encaissements
+
 >>> V2.0.1
 
 Modification des masques d'impression pour un décalage enveloppe

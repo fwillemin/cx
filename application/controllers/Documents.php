@@ -23,43 +23,44 @@ class Documents extends My_Controller {
     public function editionDevis($devisId = null) {
 
         if ($devisId) :
+
             $devis = $this->managerDevis->getDevisById($devisId);
             if (empty($devis)) :
                 redirect('chiffrages/');
                 exit;
-            else :
-                $articles = $this->managerDevisarticles->getArticlesByDevisId($devis->getDevisId());
-
-                $data = array(
-                    'pdv' => $this->pdv,
-                    'devis' => $devis,
-                    'articles' => $articles,
-                    'title' => 'CX - Devis',
-                    'description' => '',
-                    'keywords' => '',
-                    'content' => $this->viewFolder . __FUNCTION__
-                );
-                $this->load->view('template/contentDocuments', $data);
-
-                // Extend the TCPDF class to create custom Header and Footer
-                $html = $this->output->get_output();
-
-                // create new PDF document
-                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false, false, $this->piedPage1, $this->piedPage2);
-                $pdf->SetCreator(PDF_CREATOR);
-                $pdf->SetAuthor($this->pdv->getPdvNomCommercial());
-                $pdf->SetTitle('Devis ' . $devis->getDevisId());
-                $pdf->SetSubject('Devis ' . $devis->getDevisId());
-
-                $pdf->SetMargins(5, 5, 5);
-                // set auto page breaks
-                $pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM);
-                $pdf->AddPage();
-
-                $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
-
-                $pdf->Output('Devis ' . $devis->getDevisId() . '.pdf', 'FI');
             endif;
+            $articles = $this->managerDevisarticles->getArticlesByDevisId($devis->getDevisId());
+
+            $data = array(
+                'pdv' => $this->pdv,
+                'devis' => $devis,
+                'articles' => $articles,
+                'title' => 'CX - Devis',
+                'description' => '',
+                'keywords' => '',
+                'content' => $this->viewFolder . __FUNCTION__
+            );
+            $this->load->view('template/contentDocuments', $data);
+
+            // Extend the TCPDF class to create custom Header and Footer
+            $html = $this->output->get_output();
+
+            // create new PDF document
+            $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false, false, $this->piedPage1, $this->piedPage2);
+            $pdf->SetCreator(PDF_CREATOR);
+            $pdf->SetAuthor($this->pdv->getPdvNomCommercial());
+            $pdf->SetTitle('Devis ' . $devis->getDevisId());
+            $pdf->SetSubject('Devis ' . $devis->getDevisId());
+
+            $pdf->SetMargins(5, 5, 5);
+            // set auto page breaks
+            $pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM);
+            $pdf->AddPage();
+
+            $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+
+            $pdf->Output('Devis ' . $devis->getDevisId() . '.pdf', 'FI');
+
         else :
             redirect('chiffrages/');
             exit;
@@ -169,6 +170,7 @@ class Documents extends My_Controller {
         endif;
         $facture = $this->managerFactures->getFactureById($factureId);
         $facture->hydrateClient();
+        $facture->hydrateReglements();
 
         $data = array(
             'pdv' => $this->pdv,

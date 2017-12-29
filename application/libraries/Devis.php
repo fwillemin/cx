@@ -50,7 +50,7 @@ class Devis {
 //            $this->setDevisBdcId(0);
 //        endif;
 
-        $this->devisTvas = $CI->managerDevistva->getTvaByDevisId($this->getDevisId());
+        $this->devisTvas = $CI->managerDevistva->getTvaByDevisId($this->devisId);
         $bdcLien = $CI->managerBdc->getBdcByDevisId($this->devisId);
         if ($bdcLien):
             $this->devisBdcId = $bdcLien->getBdcId();

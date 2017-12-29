@@ -193,6 +193,15 @@ class Chiffrages extends My_Controller {
             $this->session->set_userdata('venteId', $devis->getDevisId());
         endif;
 
+        /* On enregistre les TVA pour le Devis */
+        if ($this->session->userdata('venteExonerationTVA') == 0) :
+            foreach ($this->session->userdata('venteTVA') as $taux => $montant) :
+                $dataTVA = array('tvaDevisId' => $devis->getDevisId(), 'tvaTaux' => $taux, 'tvaMontant' => $montant);
+                $tvaDevis = new Devistva($dataTVA);
+                $this->managerDevistva->ajouter($tvaDevis);
+            endforeach;
+        endif;
+
         /* on ajoute les articles de la vente à la bdd */
         $devis->hydrateArticles();
         $newArticles = array();
