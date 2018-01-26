@@ -258,6 +258,26 @@ class Facturation extends My_Controller {
         $this->load->view('template/content', $data);
     }
 
+    public function caParClient() {
+        $periode = $this->_getLimitesPeriode();
+
+        $chiffres = $this->managerFactures->chiffresClientsPro(array('factureDate >=' => $periode['start'], 'factureDate <=' => $periode['end']));
+
+        $totalParticuliers = $this->managerFactures->chiffresClientsParticuliers(array('factureDate >=' => $periode['start'], 'factureDate <=' => $periode['end']))[0]->chiffreAffaire;
+
+        $data = array(
+            'chiffres' => $chiffres,
+            'totalParticuliers' => $totalParticuliers,
+            'debut' => $periode['start'],
+            'fin' => $periode['end'],
+            'title' => 'Chiffre Affaires Clients Pro',
+            'description' => 'Répartition du CA des clients Pro',
+            'keywords' => '',
+            'content' => $this->view_folder . __FUNCTION__
+        );
+        $this->load->view('template/content', $data);
+    }
+
     public function addPeriode() {
         $this->form_validation->set_rules('start', 'Start', 'required|trim');
         $this->form_validation->set_rules('end', 'End', 'required|trim');

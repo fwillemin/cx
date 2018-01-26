@@ -38,7 +38,7 @@ $(document).ready(function () {
     $('.btnAddFacture').on('click', function (e) {
         e.stopPropagation();
     });
-    $('#extractStart, #extractEnd').on('change', function () {
+    $('#lancerRecherchePeriode').on('click', function () {
         $.post(chemin + 'facturation/addPeriode', { start: $('#extractStart').val(), end: $('#extractEnd').val() }, function (data) {
             if (data.type == 'success')
                 window.location.reload();

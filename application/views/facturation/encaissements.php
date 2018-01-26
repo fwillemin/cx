@@ -23,9 +23,10 @@
                 </thead>
                 <tbody>
                     <?php
+                    $totalHTPeriode = 0;
+                    $totalTVAPeriode = 0;
                     if (!empty($factures)):
-                        $totalHTPeriode = 0;
-                        $totalTVAPeriode = 0;
+
                         foreach ($factures as $f):
                             $totalHTPeriode += $f->getFactureTotalHT();
                             $totalTVAPeriode += $f->getFactureTotalTVA();

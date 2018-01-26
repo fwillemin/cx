@@ -10,7 +10,9 @@ $(document).ready(function () {
         pageSize: 50,
         contextMenu: '#context-menu',
         //onContextMenuItem: contextActionsDevis,
-        onClickRow: function(row){ window.location.assign( chemin + 'chiffrages/reloadDevis/' + row.devisId)},
+        onClickRow: function (row) {
+            window.location.assign(chemin + 'chiffrages/reloadDevis/' + row.devisId)
+        },
         columns: [[{
                     field: 'devisId',
                     title: 'ID',
@@ -87,7 +89,7 @@ $(document).ready(function () {
             }
         }, 'json');
     });
-    $('#venteCollaborateurId').on('change', function () {        
+    $('#venteCollaborateurId').on('change', function () {
         $.post(chemin + 'chiffrages/venteCollaborateurChange', {venteCollaborateurId: $(this).val()}, function (data) {
             if (data.type == 'success') {
                 window.location.reload();
@@ -136,19 +138,48 @@ $(document).ready(function () {
             }
         }, 'json');
     }
-    
-    $('#btnDevisPerdu').on('click', function(){
-        $.post(chemin + 'chiffrages/devisPerdu', {devisId: $(this).attr('data-devisid')}, function(data){
+
+    $('#btnDevisPerdu').confirm({
+        title: 'Mais, pourquoi ?!',
+        content: 'Merci de choisir la raison pour laquelle le devis a été perdu.',
+        type: 'purple',
+        closeIcon: true,
+        closeIconClass: 'fas fa-times',
+        columnClass: 'medium',
+        buttons: {
+            noProduct: {
+                text: 'Offre produit',
+                action: function () {
+                    devisPerdu($('#btnDevisPerdu').attr('data-devisid'), 2);
+                }
+            },
+            prix: {
+                text: 'Prix trop élevé',
+                action: function () {
+                    devisPerdu($('#btnDevisPerdu').attr('data-devisid'), 3);
+                }
+            },
+            autre: {
+                text: 'Autre raison',
+                action: function () {
+                    devisPerdu($('#btnDevisPerdu').attr('data-devisid'), 4);
+                }
+            }
+        }
+    });
+
+    function devisPerdu(devisId, motif) {
+        $.post(chemin + 'chiffrages/devisPerdu', {devisId: devisId, motif: motif}, function (data) {
             switch (data.type) {
                 case 'success':
-                    window.location.reload();
+                    window.location.assign(chemin + 'chiffrages/reloadDevis/' + devisId);
                     break;
                 case 'error':
                     $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
                     break;
             }
         }, 'json');
-    });
+    };
 
     /* ----- RECHERCHE ARTICLE ----- */
     $('#addArticleDesignation').on('blur', function () {
@@ -204,7 +235,7 @@ $(document).ready(function () {
     });
 
     $(this).on('click', '.produitSearchLigne', function () {
-        
+
         $('#venteArticleId').val($(this).attr('id'));
         /* recherche des informations pour remplir la ligne article */
         $.post(chemin + 'produits/getProduit', {produitId: $(this).attr('id')}, function (data) {
@@ -253,10 +284,10 @@ $(document).ready(function () {
         majArticle();
     });
 
-    function majArticle() {        
-        if ($('#addArticleMultiple').val() !== '' && $('#addArticleMultiple').val() > 0) {            
-            var valideQte = majMultiple($('#addArticleQte').val(), $('#addArticleMultiple').val());            
-            $('#addArticleQte').val( valideQte );
+    function majArticle() {
+        if ($('#addArticleMultiple').val() !== '' && $('#addArticleMultiple').val() > 0) {
+            var valideQte = majMultiple($('#addArticleQte').val(), $('#addArticleMultiple').val());
+            $('#addArticleQte').val(valideQte);
         }
         $('#addArticleTotal').val(Math.round($('#addArticleQte').val() * $('#addArticlePrixUnitaire').val() * ((100 - $('#addArticleRemise').val()) / 100) * 100) / 100);
     }
@@ -401,126 +432,126 @@ $(document).ready(function () {
     });
 
     /* -- Livraison -- */
-    $('#btnModalBl').on('click', function () {
-        $('#modalLivraison').modal('show');
-    });
-    $('#modalLivraison').on('hidden.bs.modal', function () {
-        window.location.assign(chemin + 'chiffrages/reloadBdc/' + $('#idVenteLivree').val());
-    });
-    $('#btnAddBl').on('dblclick', function () {
-        var livraison = [];
-        $('.articlesALivrer').each(function () {
-            article = [];
-            if ($(this).children('td').eq(3).find('.qteALivrer').val() != '0') {
-                article.push($(this).attr('id'));
-                article.push($(this).children('td').eq(3).find('.qteALivrer').val());
-                article.push($(this).children('td').eq(4).find('.stockADeduire').val());
-                livraison.push(article);
-            }
-        }).promise().done(
-                function () {
-                    $.post(chemin + 'livraisons/addBl', {livraisons: livraison, bdcId: $('#idVenteLivree').val()}, function (data) {
-                        $('#modalLivraison .alert').remove();
-                        if (data.type == 'success') {
-                            $('#btnAddBl').fadeOut();
-                            $('#livraisonTable').before('<div class="alert alert-success">Un Bl est enregistré pour ce bon de commande.</div>');
-                            $('#livraisonTable').remove();
-                        } else {
-                            $('#modalLivraison .modal-footer').prepend('<div class="alert alert-danger">' + data.message + '</div>');
-                        }
-
-                    }, 'json');
-                }
-        );
-    });
-
-    $('.delBl').on('dblclick', function () {
-        var elem = $(this);
-        $.post(chemin + 'livraisons/delBl', {blId: elem.attr('cible')}, function (data) {
-            if (data.type == 'success') {
-                window.location.assign(chemin + 'chiffrages/reloadBdc/' + elem.attr('bdc'));
-            }
-        }, 'json');
-    });
+//    $('#btnModalBl').on('click', function () {
+//        $('#modalLivraison').modal('show');
+//    });
+//    $('#modalLivraison').on('hidden.bs.modal', function () {
+//        window.location.assign(chemin + 'chiffrages/reloadBdc/' + $('#idVenteLivree').val());
+//    });
+//    $('#btnAddBl').on('dblclick', function () {
+//        var livraison = [];
+//        $('.articlesALivrer').each(function () {
+//            article = [];
+//            if ($(this).children('td').eq(3).find('.qteALivrer').val() != '0') {
+//                article.push($(this).attr('id'));
+//                article.push($(this).children('td').eq(3).find('.qteALivrer').val());
+//                article.push($(this).children('td').eq(4).find('.stockADeduire').val());
+//                livraison.push(article);
+//            }
+//        }).promise().done(
+//                function () {
+//                    $.post(chemin + 'livraisons/addBl', {livraisons: livraison, bdcId: $('#idVenteLivree').val()}, function (data) {
+//                        $('#modalLivraison .alert').remove();
+//                        if (data.type == 'success') {
+//                            $('#btnAddBl').fadeOut();
+//                            $('#livraisonTable').before('<div class="alert alert-success">Un Bl est enregistré pour ce bon de commande.</div>');
+//                            $('#livraisonTable').remove();
+//                        } else {
+//                            $('#modalLivraison .modal-footer').prepend('<div class="alert alert-danger">' + data.message + '</div>');
+//                        }
+//
+//                    }, 'json');
+//                }
+//        );
+//    });
+//
+//    $('.delBl').on('dblclick', function () {
+//        var elem = $(this);
+//        $.post(chemin + 'livraisons/delBl', {blId: elem.attr('cible')}, function (data) {
+//            if (data.type == 'success') {
+//                window.location.assign(chemin + 'chiffrages/reloadBdc/' + elem.attr('bdc'));
+//            }
+//        }, 'json');
+//    });
 
     /* -- Facture --*/
-
-    $('#formAddReglement').on('submit', function (e) {
-        e.preventDefault();
-        $('#btnAddReglementSubmit').hide();
-        $('#loaderReglement').show();
-        var donnees = $(this).serialize();
-        $.post(chemin + 'factures/addReglement', donnees, function (data) {
-            switch (data.type) {
-                case 'success':
-                    window.location.reload();
-                    break;
-                case 'error':
-                    $('#btnAddReglementSubmit').show();
-                    $('#loaderReglement').hide();
-                    $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
-                    break;
-            }
-        }, 'json');
-    });
-
-    $('.btnDelReglement').on('dblclick', function () {
-        $.post(chemin + 'factures/delReglement/', {reglementId: $(this).closest('tr').attr('data-reglementid')}, function (data) {
-            switch (data.type) {
-                case 'success':
-                    window.location.reload();
-                    break;
-                case 'error':
-                    $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
-                    break;
-            }
-        }, 'json');
-    });
-    $('.btnDelAcompte').on('dblclick', function () {
-        $.post(chemin + 'factures/delAcompte/', {acompteId: $(this).closest('tr').attr('data-acompteid')}, function (data) {
-            switch (data.type) {
-                case 'success':
-                    window.location.reload();
-                    break;
-                case 'error':
-                    $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
-                    break;
-            }
-        }, 'json');
-    });
-
-    $('.addAcompteFactureId').on('change', function () {
-        var element = $(this);
-        $.post(chemin + 'factures/acompteAffectation', {acompteId: element.closest('tr').attr('data-acompteid'), factureId: element.val()}, function (data) {
-            switch (data.type) {
-                case 'success':
-                    window.location.reload();
-                    break;
-                case 'error':
-                    $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
-                    break;
-            }
-        }, 'json');
-    });
+//
+//    $('#formAddReglement').on('submit', function (e) {
+//        e.preventDefault();
+//        $('#btnAddReglementSubmit').hide();
+//        $('#loaderReglement').show();
+//        var donnees = $(this).serialize();
+//        $.post(chemin + 'factures/addReglement', donnees, function (data) {
+//            switch (data.type) {
+//                case 'success':
+//                    window.location.reload();
+//                    break;
+//                case 'error':
+//                    $('#btnAddReglementSubmit').show();
+//                    $('#loaderReglement').hide();
+//                    $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
+//                    break;
+//            }
+//        }, 'json');
+//    });
+//
+//    $('.btnDelReglement').on('dblclick', function () {
+//        $.post(chemin + 'factures/delReglement/', {reglementId: $(this).closest('tr').attr('data-reglementid')}, function (data) {
+//            switch (data.type) {
+//                case 'success':
+//                    window.location.reload();
+//                    break;
+//                case 'error':
+//                    $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
+//                    break;
+//            }
+//        }, 'json');
+//    });
+//    $('.btnDelAcompte').on('dblclick', function () {
+//        $.post(chemin + 'factures/delAcompte/', {acompteId: $(this).closest('tr').attr('data-acompteid')}, function (data) {
+//            switch (data.type) {
+//                case 'success':
+//                    window.location.reload();
+//                    break;
+//                case 'error':
+//                    $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
+//                    break;
+//            }
+//        }, 'json');
+//    });
+//
+//    $('.addAcompteFactureId').on('change', function () {
+//        var element = $(this);
+//        $.post(chemin + 'factures/acompteAffectation', {acompteId: element.closest('tr').attr('data-acompteid'), factureId: element.val()}, function (data) {
+//            switch (data.type) {
+//                case 'success':
+//                    window.location.reload();
+//                    break;
+//                case 'error':
+//                    $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
+//                    break;
+//            }
+//        }, 'json');
+//    });
 
     /* -- Reglements -- */
-    $('#addReglementObjet').on('change', function () {
-        $.post(chemin + 'factures/resteAPayer', {factureId: $(this).val()}, function (data) {
-            if (data.type == 'success') {
-                $('#addReglementTotal').val(data.RAP);
-            }
-        }, 'json');
-    });
-    
-    $('#btnSendEmail').on('dblclick', function(){
-        
-        $.post(chemin + 'chiffrages/sendDevisByEmail/', {}, function(retour){
-            if (retour.type == 'success') {
-                $.toaster({priority: 'success', title: '<strong><i class="far fa-hand-peace"></i> OK</strong>', message: '<br>' + 'Devis envoyé'});
-            } else {
-                $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + retour.message});
-            }
-        }, 'json');
-    });
+//    $('#addReglementObjet').on('change', function () {
+//        $.post(chemin + 'factures/resteAPayer', {factureId: $(this).val()}, function (data) {
+//            if (data.type == 'success') {
+//                $('#addReglementTotal').val(data.RAP);
+//            }
+//        }, 'json');
+//    });
+//    
+//    $('#btnSendEmail').on('dblclick', function(){
+//        
+//        $.post(chemin + 'chiffrages/sendDevisByEmail/', {}, function(retour){
+//            if (retour.type == 'success') {
+//                $.toaster({priority: 'success', title: '<strong><i class="far fa-hand-peace"></i> OK</strong>', message: '<br>' + 'Devis envoyé'});
+//            } else {
+//                $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + retour.message});
+//            }
+//        }, 'json');
+//    });
 });
 

@@ -9,7 +9,9 @@ $(document).ready(function () {
         showColumns: true,
         pageSize: 50,
         contextMenu: '#context-menu',
-        onClickRow: function(row){ window.location.assign( chemin + 'ventes/reloadBdc/' + row.bdcId)},
+        onClickRow: function (row) {
+            window.location.assign(chemin + 'ventes/reloadBdc/' + row.bdcId)
+        },
         //onContextMenuItem: contextActionsBdc,
         columns: [[{
                     field: 'bdcId',
@@ -247,14 +249,14 @@ $(document).ready(function () {
         majArticle();
     });
 
-    function majArticle() {        
-        if ($('#addArticleMultiple').val() !== '' && $('#addArticleMultiple').val() > 0) {            
-            var valideQte = majMultiple($('#addArticleQte').val(), $('#addArticleMultiple').val());            
-            $('#addArticleQte').val( valideQte );
+    function majArticle() {
+        if ($('#addArticleMultiple').val() !== '' && $('#addArticleMultiple').val() > 0) {
+            var valideQte = majMultiple($('#addArticleQte').val(), $('#addArticleMultiple').val());
+            $('#addArticleQte').val(valideQte);
         }
         $('#addArticleTotal').val(Math.round($('#addArticleQte').val() * $('#addArticlePrixUnitaire').val() * ((100 - $('#addArticleRemise').val()) / 100) * 100) / 100);
     }
-    
+
     /* ----- AJOUT ARTICLE AU PANIER ----- */
     $('#formAddArticle').on('submit', function (e) {
         e.preventDefault();
@@ -379,6 +381,68 @@ $(document).ready(function () {
         window.location.assign(chemin + 'ventes/resetDevisEncours');
     });
 
+    $('#btnDelBdc').confirm({
+        title: 'Suppression du bon de commande',
+        content: 'Confirmez-vous la suppression de ce bon de commande ?',
+        type: 'purple',
+        columnClass: 'medium',
+        buttons: {
+            confirm: {
+                text: 'Oui, supprimer',
+                btnClass: 'btn-green',
+                action: function () {
+                    $.post(chemin + 'ventes/deleteBdc/', {bdcId: $('#btnDelBdc').attr('data-bdcid')}, function (data) {
+                        switch (data.type) {
+                            case 'success':
+                                window.location.assign(chemin + 'ventes/reloadBdc/' + $('#btnDelBdc').attr('data-bdcid'));
+                                break;
+                            case 'error':                                
+                                $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
+                                break;
+                        }
+                    }, 'json');
+                }
+            },
+            cancel: {
+                text: 'Annuler',
+                action: function () {
+
+                }
+            }
+        }
+    });
+    
+    $('#btnReanimateBdc').confirm({
+        title: 'Annuler la suppression du bon de commande',
+        content: 'Confirmez-vous vouloir annuler la suppression de ce bon de commande ?',
+        type: 'purple',
+        columnClass: 'medium',
+        buttons: {
+            confirm: {
+                text: 'Oui',
+                btnClass: 'btn-green',
+                action: function () {
+                    $.post(chemin + 'ventes/reanimateBdc/', {bdcId: $('#btnReanimateBdc').attr('data-bdcid')}, function (data) {
+                        switch (data.type) {
+                            case 'success':
+                                window.location.assign(chemin + 'ventes/reloadBdc/' + $('#btnReanimateBdc').attr('data-bdcid'));
+                                break;
+                            case 'error':                                
+                                $.toaster({priority: 'danger', title: '<strong><i class="fas fa-exclamation-triangle"></i> Oups</strong>', message: '<br>' + data.message});
+                                break;
+                        }
+                    }, 'json');
+                }
+            },
+            cancel: {
+                text: 'Annuler',
+                action: function () {
+
+                }
+            }
+        }
+    });
+
     /* -- Livraison -- */
     $('#btnModalBl').on('click', function () {
         $('#modalLivraison').modal('show');
@@ -449,11 +513,11 @@ $(document).ready(function () {
 
     /* -- Reglements -- */
     $('#addReglementObjet').on('change', function () {
-        if( $(this).val() == '0' ){
+        if ($(this).val() == '0') {
             $('#addReglementMontant').val('');
         } else {
             $.post(chemin + 'factures/resteAPayer', {factureId: $(this).val()}, function (data) {
-                switch(data.type){
+                switch (data.type) {
                     case 'success':
                         $('#addReglementMontant').val(data.RAP);
                         break;
@@ -466,46 +530,48 @@ $(document).ready(function () {
         }
     });
 
-    $('.reaffecteReglement').on('change', function() {        
-        $.post( chemin + 'factures/affecteReglementAFacture', {reglementId: $(this).closest('tr').attr('data-reglementid'), factureId: $(this).val()}, function(retour){            
-            switch(retour.type){
-                    case 'success':                        
-                        window.location.reload();
-                        break;
-                    case 'error':
-                        $.toaster({priority: 'danger', title: '<strong><i class="fas fa-warning"></i> Oups</strong>', message: '<br>' + retour.message});
-                        break;
-                }
+    $('.reaffecteReglement').on('change', function () {
+        $.post(chemin + 'factures/affecteReglementAFacture', {reglementId: $(this).closest('tr').attr('data-reglementid'), factureId: $(this).val()}, function (retour) {
+            switch (retour.type) {
+                case 'success':
+                    window.location.reload();
+                    break;
+                case 'error':
+                    $.toaster({priority: 'danger', title: '<strong><i class="fas fa-warning"></i> Oups</strong>', message: '<br>' + retour.message});
+                    break;
+            }
         }, 'json');
     });
-    
+
     function reglementRAZ() {
         $('#addReglementId').val('');
         $('#addReglementMontant').val('');
         $('#addReglementMotif').val('');
-        $('#addReglementMotif').hide();        
+        $('#addReglementMotif').hide();
         $('#btnAddReglementSubmit').attr('class', 'btn btn-sm btn-primary');
         $('#btnAddReglementSubmit').html('<i class="glyphicon glyphicon-piggy-bank"></i> Payer');
         $('#btnAddReglementCancel').hide();
     }
-    
-    $('#btnAddReglementCancel').on('click', function(){reglementRAZ()});
-    
-    $('.btnModReglement').on('click', function(){
-        
+
+    $('#btnAddReglementCancel').on('click', function () {
+        reglementRAZ()
+    });
+
+    $('.btnModReglement').on('click', function () {
+
         reglementRAZ();
-        $('#addReglementMotif').show();        
+        $('#addReglementMotif').show();
         $('#btnAddReglementCancel').show();
         $('#btnAddReglementSubmit').html('<i class="fas fa-pencil-alt"></i> Modifier');
         $('#btnAddReglementSubmit').attr('class', 'btn btn-sm btn-danger');
-        $('#addReglementId').val( $(this).closest('tr').attr('data-reglementid'));
-        $('#addReglementMontant').val( $(this).closest('tr').attr('data-reglementMontant') );    
+        $('#addReglementId').val($(this).closest('tr').attr('data-reglementid'));
+        $('#addReglementMontant').val($(this).closest('tr').attr('data-reglementMontant'));
         $('#addReglementMode option[value="' + $(this).closest('tr').attr('data-reglementmodeid') + '"]').prop('selected', true);
-        $('#addReglementObjet option[value="' + $(this).closest('tr').children('td').eq('3').find('select').val() + '"]').prop('selected', true);        
+        $('#addReglementObjet option[value="' + $(this).closest('tr').children('td').eq('3').find('select').val() + '"]').prop('selected', true);
     });
 
-    $('#btnSendBdcEmail').on('dblclick', function(){        
-        $.post(chemin + 'ventes/sendBdcByEmail/', {}, function(retour){
+    $('#btnSendBdcEmail').on('dblclick', function () {
+        $.post(chemin + 'ventes/sendBdcByEmail/', {}, function (retour) {
             if (retour.type == 'success') {
                 $.toaster({priority: 'success', title: '<strong><i class="far fa-hand-peace"></i> OK</strong>', message: '<br>' + 'Bon de commande envoyé'});
             } else {
@@ -513,9 +579,9 @@ $(document).ready(function () {
             }
         }, 'json');
     });
-    
-    $('.btnSendBlEmail').on('dblclick', function(){        
-        $.post(chemin + 'livraisons/sendBlByEmail/', {blId: $(this).closest('tr').attr('data-blid')}, function(retour){
+
+    $('.btnSendBlEmail').on('dblclick', function () {
+        $.post(chemin + 'livraisons/sendBlByEmail/', {blId: $(this).closest('tr').attr('data-blid')}, function (retour) {
             if (retour.type == 'success') {
                 $.toaster({priority: 'success', title: '<strong><i class="far fa-hand-peace"></i> OK</strong>', message: '<br>' + 'Bon de livraison envoyé'});
             } else {
@@ -523,9 +589,9 @@ $(document).ready(function () {
             }
         }, 'json');
     });
-    
-    $('.btnSendFactureEmail').on('dblclick', function(){        
-        $.post(chemin + 'factures/sendFactureByEmail/', {factureId: $(this).closest('tr').attr('data-factureid')}, function(retour){
+
+    $('.btnSendFactureEmail').on('dblclick', function () {
+        $.post(chemin + 'factures/sendFactureByEmail/', {factureId: $(this).closest('tr').attr('data-factureid')}, function (retour) {
             if (retour.type == 'success') {
                 $.toaster({priority: 'success', title: '<strong><i class="far fa-hand-peace"></i> OK</strong>', message: '<br>' + 'Facture envoyée'});
             } else {

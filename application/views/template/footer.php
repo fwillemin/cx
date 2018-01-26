@@ -29,6 +29,7 @@
 <script defer type="text/javascript" src="<?php echo base_url('assets/bootstrap-table/dist/bootstrap-table.min.js'); ?>"></script>
 <script defer type="text/javascript" src="<?php echo base_url('assets/bootstrap-table/dist/bootstrap-table-contextmenu.min.js'); ?>"></script>
 <script defer type="text/javascript" src="<?php echo base_url('assets/bootstrap-table/dist/locale/bootstrap-table-fr-FR.min.js'); ?>"></script>
+<script defer type="text/javascript" src="<?php echo base_url('assets/jqueryConfirm/jquery-confirm.min.js'); ?>"></script>
 
 <?php if ($this->ion_auth->logged_in()): ?>
     <script defer type="text/javascript" src="<?php echo base_url('assets/chart/Chart.min.js'); ?>"></script>

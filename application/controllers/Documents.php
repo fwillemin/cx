@@ -116,7 +116,6 @@ class Documents extends My_Controller {
     public function editionBl($blId = null, $nonchiffre = null) {
 
         if (!$blId || !$this->existBl($blId)) :
-            log_message('error', __CLASS__ . '/' . __FUNCTION__ . ' : ' . validation_errors());
             redirect('ventes/');
             exit;
         endif;

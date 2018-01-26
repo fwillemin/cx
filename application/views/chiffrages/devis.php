@@ -3,39 +3,49 @@
 
         <div class="baseCX col-sm-10 col-sm-offset-1">
 
-            <?php
-            if ($this->session->userdata('venteId') && $this->session->userdata('venteType') == 1):
-                $content = "<div style='text-align: center;'>"
-                        . "<a class='btn btn-link btn-sm' href='" . site_url('chiffrages/dupliquerDevis/' . $this->session->userdata('venteId')) . "'><i class='fa fa-copy'></i> Dupliquer</a>";
-                if ($this->session->userdata('venteEtat') == 0):
-                    $content .= "<br><a class='btn btn-link btn-sm' href='" . site_url('chiffrages/devisPerdu/' . $this->session->userdata('venteId')) . "'><i class='fa fa-thumbs-down'></i> Devis perdu</a>";
-                elseif ($this->session->userdata('venteEtat') == 1):
-                    $content .= "<br><a class='btn btn-link btn-sm' href='" . site_url('chiffrages/devisEncours/' . $this->session->userdata('venteId')) . "'><i class='fa fa-thumbs-up'></i> Reprendre</a>";
-                endif;
-                if ($this->session->userdata('venteEtat') < 2):
-                    $content .= "<hr><a class='btn btn-danger btn-sm' href='" . site_url('chiffrages/deleteDevis/' . $this->session->userdata('venteId')) . "'><i class='fa fa-trash'></i> Supprimer</a>";
-                endif;
-                $content .= "</div>";
-            else:
-                $content = "<div style='text-align: center;'>Le devis en cours n'est pas enregistré</div>";
-            endif;
-            ?>
-
             <div class="row">
                 <div class="col-sm-12">
                     <?php if ($this->session->userdata('venteId')): ?>
+
                         <h2 style="color:green; margin-bottom: 0px">
-                            <button type="button" class="btn btn-sm btn-default" data-toggle="popover" title="Options" data-placement="bottom" data-html="true"
-                                    data-content="<?= $content; ?>">
-                                <i class="fas fa-cog"></i>
-                            </button>
+
+                            <div class="dropdown" style="position: relative; float:left; margin-right:10px;">
+                                <button class="btn btn-default" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-cog"></i>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dLabel" style="text-align: center;">
+                                    <li>
+                                        <a href="<?= site_url('chiffrages/dupliquerDevis/' . $this->session->userdata('venteId')); ?>">
+                                            <i class="fa fa-copy"></i> Dupliquer
+                                        </a>
+                                    </li>
+                                    <?php
+                                    if ($this->session->userdata('venteEtat') == 0):
+                                        echo '<li><button class="btn btn-link" id="btnDevisPerdu" data-devisid="' . $this->session->userdata('venteId') . '"><i class="fa fa-thumbs-down"></i> Devis perdu</button></li>';
+                                    elseif ($this->session->userdata('venteEtat') > 1):
+                                        echo '<li><a href="' . site_url('chiffrages/devisEncours/' . $this->session->userdata('venteId')) . '"><i class="fa fa-thumbs-up"></i> Reprendre</a></li>';
+                                    endif;
+                                    if ($this->session->userdata('venteEtat') != 1):
+                                        echo '<li class="divider"></li><li><a style="color:orangered;" href="' . site_url('chiffrages/deleteDevis/' . $this->session->userdata('venteId')) . '"><i class="fa fa-trash"></i> Supprimer</a></li>';
+                                    endif;
+                                    ?>
+                                </ul>
+                            </div>
+
                             <?php
-                            echo 'Devis N°' . $this->session->userdata('venteId');
+                            echo ' Devis N°' . $this->session->userdata('venteId');
                             switch ($this->session->userdata('venteEtat')):
-                                case 1:
-                                    echo ' <span style="font-size: 18px; color: grey;">Perdu</span>';
-                                    break;
                                 case 2:
+                                    echo ' <span style="font-size: 18px; color: grey;">Perdu - Offre produit</span>';
+                                    break;
+                                case 4:
+                                    echo ' <span style="font-size: 18px; color: grey;">Perdu - Autre</span>';
+                                    break;
+                                case 3:
+                                    echo ' <span style="font-size: 18px; color: grey;">Perdu - Prix</span>';
+                                    break;
+                                case 9:
                                     echo ' <span style="font-size: 18px; color: grey;">Supprimé</span>';
                                     break;
                             endswitch;

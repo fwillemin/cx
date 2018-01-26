@@ -41,12 +41,12 @@ class Own {
         'î' => 'i'
     );
 
-    function mktimeFromInputDate($input = null) {
+    function mktimeFromInputDate($input = null, $heure = 0, $minutes = 0, $secondes = 0) {
         date_default_timezone_set('Europe/Paris');
         if ($input == '' || !$input || $input == 0): return 0;
         else:
             $temp = explode('-', $input);
-            return mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
+            return mktime($heure, $minutes, $secondes, $temp[1], $temp[2], $temp[0]);
         endif;
     }
 
@@ -61,6 +61,21 @@ class Own {
                 . '<html xmlns="http://www.w3.org/1999/xhtml">'
                 . '<head>'
                 . '<title>Document envoyé par ' . $pdv->getPdvNomCommercial() . '</title>'
+                . '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">'
+                . '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+                . '</head>'
+                . '<body style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; background-color: #FFF;">'
+                . '<table width="100%" height="100%" cellpadding="0" style="padding: 20px 0px 20px 0px">'
+                . '<tr><td style="width:15px;"></td><td>';
+        return $code;
+    }
+
+    private function _enteteEmail2() {
+
+        $code = '<!DOCTYPE HTML>'
+                . '<html xmlns="http://www.w3.org/1999/xhtml">'
+                . '<head>'
+                . '<title>Document envoyé par CX</title>'
                 . '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">'
                 . '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
                 . '</head>'
@@ -198,6 +213,60 @@ class Own {
         $CI->email->message($message);
         $CI->email->attach('assets/Avoir ' . $avoir->getAvoirId() . '.pdf');
         return $CI->email->send();
+    }
+
+    public function emailClotureJour(Cloture $cloture) {
+
+        $CI = &get_instance();
+        $CI->email->from('francois.willemin@xanthellis.com', 'Serveur CX');
+        $CI->email->to('willeminfrancois@gmail.com');
+        $CI->email->subject('CX - Clôture journalière de caisse effectuée');
+
+        /* Création du message */
+        $message = $this->_enteteEmail2();
+
+        $message .= '<p>Clôture de la caisse effectuée en date du ' . date('d/m/Y H:i') . ' pour un montant TTC de ' . number_format($cloture->getClotureMontant(), 2, ',', ' ') . '€</p>';
+
+        $message .= $this->_footerEmail();
+
+        $CI->email->message($message);
+        $CI->email->send();
+    }
+
+    public function emailClotureMois(Cloture $cloture) {
+
+        $CI = &get_instance();
+        $CI->email->from('francois.willemin@xanthellis.com', 'Serveur CX');
+        $CI->email->to('willeminfrancois@gmail.com');
+        $CI->email->subject('CX - Clôture mensuelle de caisse effectuée');
+
+        /* Création du message */
+        $message = $this->_enteteEmail2();
+
+        $message .= '<p>Clôture de la caisse effectuée en date du ' . date('d/m/Y H:i') . ' pour un montant TTC de ' . number_format($cloture->getClotureMontant(), 2, ',', ' ') . '€</p>';
+
+        $message .= $this->_footerEmail();
+
+        $CI->email->message($message);
+        $CI->email->send();
+    }
+
+    public function emailClotureAnnee(Cloture $cloture) {
+
+        $CI = &get_instance();
+        $CI->email->from('francois.willemin@xanthellis.com', 'Serveur CX');
+        $CI->email->to('willeminfrancois@gmail.com');
+        $CI->email->subject('CX - Clôture Annuelle de caisse effectuée');
+
+        /* Création du message */
+        $message = $this->_enteteEmail2();
+
+        $message .= '<p>Clôture de la caisse effectuée en date du ' . date('d/m/Y H:i') . ' pour un montant TTC de ' . number_format($cloture->getClotureMontant(), 2, ',', ' ') . '€</p>';
+
+        $message .= $this->_footerEmail();
+
+        $CI->email->message($message);
+        $CI->email->send();
     }
 
 }

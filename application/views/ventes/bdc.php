@@ -5,11 +5,40 @@
 
             <div class="row" style="margin-top:5px;">
                 <div class="col-sm-12">
-                    <?php
-                    if ($this->session->userdata('venteId'))
-                        echo '<span style="color:green;"><h2>Bon de commande N°' . $this->session->userdata('venteId') . '</h2></span>';
-                    else
+                    <?php if ($this->session->userdata('venteId')): ?>
+                        <h2 style="color:green;">
+                            <div class="dropdown" style="position: relative; float:left; margin-right:10px;">
+                                <button class="btn btn-default" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-cog"></i>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dLabel" style="text-align: center;">
+                                    <?php if ($bdc->getBdcDelete()): ?>
+                                        <li>
+                                            <button class="btn btn-link" style="" data-bdcid="<?= $this->session->userdata('venteId'); ?>" id="btnReanimateBdc" >
+                                                <i class="fa fa-hand-point-right"></i> Annuler la suppression
+                                            </button>
+                                        </li>
+                                    <?php else: ?>
+                                        <li>
+                                            <button class="btn btn-link" style="color:orangered;" data-bdcid="<?= $this->session->userdata('venteId'); ?>" id="btnDelBdc" <?= $this->session->userdata('venteEtat') > 0 ? 'disabled' : ''; ?> >
+                                                <i class="fa fa-trash"></i> Supprimer
+                                            </button>
+                                        </li>
+                                    <?php endif; ?>
+                                </ul>
+                            </div>
+                            Bon de commande N°<?= $this->session->userdata('venteId'); ?>
+                            <?php
+                            if ($bdc->getBdcDelete()):
+                                echo '<span style="color:grey; font-size:18px;">Supprimé</span>';
+                            endif;
+                            ?>
+                        </h2>
+                        <?php
+                    else:
                         echo '<span style="color:gold;"><h2>Bon de commande non enregistré pour le devis N°' . $this->session->userdata('venteDevisId') . '</h2></span>';
+                    endif;
                     ?>
                 </div>
             </div>
@@ -199,7 +228,7 @@
                                     <textarea <?php if (!$bdc || $bdc->getBdcEtat() >= 2) echo 'disabled'; ?> name="venteCommentaire" id="venteCommentaire" class="form-control" rows="6" style="background-color:#ededfc;" placeholder="Commentaire pour le bon de commande"><?= $this->session->userdata('venteCommentaire'); ?></textarea>
                                     <br>
                                     <div class="btn-group" style="position:relative;">
-                                        <?php if (!$bdc || $bdc->getBdcEtat() < 2): ?>
+                                        <?php if (!$bdc || ($bdc->getBdcEtat() < 2 && !$bdc->getBdcDelete())): ?>
                                             <button class="btn btn-warning" id="btnBdcEnregistrer"><i class="glyphicon glyphicon-save"></i> <?php
                                                 if ($this->session->userdata('venteId')):
                                                     echo 'Modifier';
@@ -367,8 +396,8 @@
                                 endif;
                                 echo '</td><td><a href = "' . site_url('factures/ficheFacture/' . $f->getFactureId()) . '">' . $f->getFactureId() . '</a>'
                                 . '</td><td>' . date('d/m/Y', $f->getFactureDate()) . '</td>'
-                                . '<td style = "text-align: right;">' . number_format($f->getFactureTotalTTC(), 2, ', ', ' ') . '</td>'
-                                . '<td style = "text-align: right;">' . number_format($f->getFactureSolde(), 2, ', ', ' ') . '</td>'
+                                . '<td style = "text-align: right;">' . number_format($f->getFactureTotalTTC(), 2, ',', ' ') . '</td>'
+                                . '<td style = "text-align: right;">' . number_format($f->getFactureSolde(), 2, ',', ' ') . '</td>'
                                 . '<td><a href = "' . site_url('documents/editionFacture/' . $f->getFactureId()) . '" target = "_blank"><i class = "fas fa-file-pdf"></i></a></td></tr>';
                             endforeach;
                         endif;
@@ -454,42 +483,46 @@
 
                     </table>
 
-                    <?= form_open('factures/addReglement', array('class' => 'form-inline', 'id' => 'formAddReglement'));
-                    ?>
-                    <input type="hidden" name="addReglementId" id="addReglementId" value="">
-                    <strong>Réglement : </strong>
-                    <div class="input-group">
-                        <input type="text" style="width:80px; text-align: right;" class="form-control input-sm" name="addReglementMontant" id="addReglementMontant" value="" required >
-                        <span class="input-group-addon">€</span>
-                    </div>
-                    <select class="form-control input-sm" name="addReglementObjet" id="addReglementObjet" >
-                        <option value="0">Acompte</option>
-                        <?php
-                        if (!empty($factures)):
-                            foreach ($factures as $f):
-                                if ($f->getFactureSolde() > 0):
-                                    echo '<option value="' . $f->getFactureId() . '">Fact N°' . $f->getFactureId() . '</option>';
-                                endif;
-                            endforeach;
-                        endif;
+                    <?php
+                    if ($bdc && !$bdc->getBdcDelete()):
+                        echo form_open('factures/addReglement', array('class' => 'form-inline', 'id' => 'formAddReglement'));
                         ?>
-                    </select>
-                    <select class="form-control input-sm" name="addReglementMode" id="addReglementMode" >
-                        <option value="1">Carte bancaire</option>
-                        <option value="2">Chèque</option>
-                        <option value="3">Espèces</option>
-                        <option value="4">Traite</option>
-                        <option value="5">Virement</option>
-                    </select>
-                    <button class="btn btn-sm btn-primary" type="submit" id="btnAddReglementSubmit"><i class="glyphicon glyphicon-piggy-bank"></i> Payer</button>
-                    <button class="btn btn-sm btn-default" type="button" id="btnAddReglementCancel" style="display: none;"><i class="fas fa-times"></i></button>
-                    <br>
-                    <input type="text" value="" placeholder="Motif" name="addReglementMotif" id="addReglementMotif" class="form-control" style="width: 100%; display: none;">
-                    <div id="loaderReglement" class="la-ball-scale-pulse form-control" style="color:orangered; border: none; display:none;">
-                        <div></div>
-                        <div></div>
-                    </div>
-                    <?= form_close(); ?>
+                        <input type="hidden" name="addReglementId" id="addReglementId" value="">
+                        <strong>Réglement : </strong>
+                        <div class="input-group">
+                            <input type="text" style="width:80px; text-align: right;" class="form-control input-sm" name="addReglementMontant" id="addReglementMontant" value="" required >
+                            <span class="input-group-addon">€</span>
+                        </div>
+                        <select class="form-control input-sm" name="addReglementObjet" id="addReglementObjet" >
+                            <option value="0">Acompte</option>
+                            <?php
+                            if (!empty($factures)):
+                                foreach ($factures as $f):
+                                    if ($f->getFactureSolde() > 0):
+                                        echo '<option value="' . $f->getFactureId() . '">Fact N°' . $f->getFactureId() . '</option>';
+                                    endif;
+                                endforeach;
+                            endif;
+                            ?>
+                        </select>
+                        <select class="form-control input-sm" name="addReglementMode" id="addReglementMode" >
+                            <option value="1">Carte bancaire</option>
+                            <option value="2">Chèque</option>
+                            <option value="3">Espèces</option>
+                            <option value="4">Traite</option>
+                            <option value="5">Virement</option>
+                        </select>
+                        <button class="btn btn-sm btn-primary" type="submit" id="btnAddReglementSubmit"><i class="glyphicon glyphicon-piggy-bank"></i> Payer</button>
+                        <button class="btn btn-sm btn-default" type="button" id="btnAddReglementCancel" style="display: none;"><i class="fas fa-times"></i></button>
+                        <br>
+                        <input type="text" value="" placeholder="Motif" name="addReglementMotif" id="addReglementMotif" class="form-control" style="width: 100%; display: none;">
+                        <div id="loaderReglement" class="la-ball-scale-pulse form-control" style="color:orangered; border: none; display:none;">
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <?php echo form_close();
+                    endif;
+                    ?>
                 </div>
 
                 <?php
@@ -544,7 +577,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <?php if ($a->getArticleProduitId() && $a->getArticleProduit()->getProduitGestionStock() == 1): ?>
+                                            <?php if ($a->getArticleProduitId() && $a->getArticleProduit()->getProduitGestionStock() == 1): ?>
                                             <select class="form-control stockADeduire input-sm">
                                                 <?php
                                                 if (!empty($a->getArticleProduit()->getProduitStocks())):

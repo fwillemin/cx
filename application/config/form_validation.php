@@ -105,6 +105,19 @@ $config = array(
             'rules' => 'required|callback_existDevis'
         )
     ),
+    /* devisPerdu */
+    'devisPerdu' => array(
+        array(
+            'field' => 'devisId',
+            'label' => 'ID du devis',
+            'rules' => 'required|callback_existDevis'
+        ),
+        array(
+            'field' => 'motif',
+            'label' => 'Motif',
+            'rules' => 'required|in_list[2,3,4]'
+        )
+    ),
     /* getBdc */
     'getBdc' => array(
         array(

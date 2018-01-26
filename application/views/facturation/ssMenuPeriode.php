@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-4 col-sm-offset-4" style="padding: 5px; border-bottom: 1px solid black; background-color: orangered;">
+        <div class="col-sm-6 col-sm-offset-3" style="padding: 5px; border-bottom: 1px solid black; background-color: orangered;">
             <div class="input-group">
                 <span class="input-group-addon">Période du</span>
                 <input type="date" name="extractStart" id="extractStart" class="form-control input-sm" value="<?php
@@ -16,6 +16,11 @@
                 else
                     echo date('Y-m-t');
                 ?>" >
+                <span class="input-group-btn">
+                    <button class="btn btn-warning btn-sm" id="lancerRecherchePeriode">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </span>
             </div>
         </div>
     </div>

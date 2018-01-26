@@ -16,6 +16,7 @@ class Model_clotures extends MY_model {
     public function ajouter(Cloture $cloture) {
         $this->db
                 ->set('clotureDate', $cloture->getClotureDate())
+                ->set('cloturePdvId', $cloture->getCloturePdvId())
                 ->set('clotureType', $cloture->getClotureType())
                 ->set('clotureMontant', $cloture->getClotureMontant())
                 ->set('clotureToken', $cloture->getClotureToken())
@@ -31,6 +32,7 @@ class Model_clotures extends MY_model {
     public function editer(Cloture $cloture) {
         $this->db
                 ->set('clotureDate', $cloture->getClotureDate())
+                ->set('cloturePdvId', $cloture->getCloturePdvId())
                 ->set('clotureType', $cloture->getClotureType())
                 ->set('clotureMontant', $cloture->getClotureMontant())
                 ->set('clotureToken', $cloture->getClotureToken())

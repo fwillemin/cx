@@ -114,8 +114,8 @@
                 </td>
                 <td class="ligneTab" style="text-align: center;">
                     <?php
-                    if ($l->getLigneRemise() > 0 && $chiffrage):
-                        echo '-' . number_format($l->getLigneArticle()->getArticleRemise(), 0, ',', ' ') . '%';
+                    if ($l->getLigneRemise() > 0):
+                        echo '-' . number_format($l->getLigneRemise(), 0, ',', ' ') . '%';
                     endif;
                     ?>
                 </td>

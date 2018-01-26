@@ -278,10 +278,19 @@ class Chiffrages extends My_Controller {
 
         $this->cart->destroy();
         $client = $this->managerClients->getClientById($devis->getDevisClientId());
+
+        if ($devis->getDevisDelete()):
+            $etatDevis = 9;
+        elseif ($dupliquer):
+            $etatDevis = 0;
+        else:
+            $etatDevis = $devis->getDevisEtat();
+        endif;
+
         $session = array(
             'venteDate' => $dupliquer ? time() : $devis->getDevisDate(),
             'venteType' => 1,
-            'venteEtat' => $dupliquer ? 0 : $devis->getDevisEtat(),
+            'venteEtat' => $etatDevis,
             'venteClientId' => $client->getClientId(),
             'venteClientType' => $devis->getDevisClient()->getClientType(),
             'venteId' => $dupliquer ? '' : $devis->getDevisId(),
@@ -363,15 +372,16 @@ class Chiffrages extends My_Controller {
         exit;
     }
 
-    public function devisPerdu($devisId) {
-        if ($this->existDevis($devisId)):
-            $devis = $this->managerDevis->getDevisById($devisId);
-            $devis->setDevisEtat(1);
-            $this->managerDevis->editer($devis);
-            redirect('chiffrages/reloadDevis/' . $devisId);
-        else:
-            redirect('chiffrages/devisListe');
+    public function devisPerdu() {
+        if (!$this->form_validation->run('devisPerdu')):
+            echo json_encode(array('type' => 'error', 'message' => validation_errors()));
+            exit;
         endif;
+
+        $devis = $this->managerDevis->getDevisById($this->input->post('devisId'));
+        $devis->setDevisEtat($this->input->post('motif'));
+        $this->managerDevis->editer($devis);
+        echo json_encode(array('type' => 'success'));
         exit;
     }
 
@@ -397,36 +407,36 @@ class Chiffrages extends My_Controller {
             if (empty($devis)) :
                 redirect('chiffrages/devis');
                 exit;
+            endif;
+
+            if ($devis->getDevisBdcId() > 0) :
+                log_message('error', 'Tentative de génération d\'un bdc déjà existant');
+                redirect('chiffrages/devis');
+                exit;
             else :
-                if ($devis->getDevisBdcId() > 0) :
-                    log_message('error', 'Tentative de génération d\'un bdc déjà existant');
-                    redirect('chiffrages/devis');
-                    exit;
-                else :
-                    /* on change la session */
-                    $session = array(
-                        'venteId' => '',
-                        'venteEtat' => '0',
-                        'venteType' => 2,
-                        'venteDevisId' => $devis->getDevisId(),
-                        'venteDate' => time(),
-                        'venteAcompte' => 0,
-                        'venteCommentaire' => '',
-                        'venteCollaborateurId' => $devis->getDevisCollaborateurId(),
-                        'venteCollaborateur' => $devis->getDevisCollaborateur()->getCollaborateurNom()
-                    );
-                    $this->session->set_userdata($session);
-                    $this->session->unset_userdata(array('venteId' => '', 'venteBdcId' => '')); /* on supprime l'id de vente qui correpondait à celui du devis */
-                    /* on conserve dans la session : venteClientId, ventePoids */
-                    /* on conserve le cart en modifiant une option */
-                    foreach ($this->cart->contents() as $item):
-                        $item['options']['bdcArticleId'] = null;
-                        unset($item['options']['devisArticleId']);
-                        $this->cart->update($item);
-                    endforeach;
-                    redirect('ventes/bdc');
-                    exit;
-                endif;
+                /* on change la session */
+                $session = array(
+                    'venteId' => '',
+                    'venteEtat' => '0',
+                    'venteType' => 2,
+                    'venteDevisId' => $devis->getDevisId(),
+                    'venteDate' => time(),
+                    'venteAcompte' => 0,
+                    'venteCommentaire' => '',
+                    'venteCollaborateurId' => $devis->getDevisCollaborateurId(),
+                    'venteCollaborateur' => $devis->getDevisCollaborateur()->getCollaborateurNom()
+                );
+                $this->session->set_userdata($session);
+                $this->session->unset_userdata(array('venteId' => '', 'venteBdcId' => '')); /* on supprime l'id de vente qui correpondait à celui du devis */
+                /* on conserve dans la session : venteClientId, ventePoids */
+                /* on conserve le cart en modifiant une option */
+                foreach ($this->cart->contents() as $item):
+                    $item['options']['bdcArticleId'] = null;
+                    unset($item['options']['devisArticleId']);
+                    $this->cart->update($item);
+                endforeach;
+                redirect('ventes/bdc');
+                exit;
             endif;
         endif;
     }

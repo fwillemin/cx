@@ -9,7 +9,7 @@
 class Devis {
 
     protected $devisId;
-    protected $devisEtat; /* 0=>Encours, 1=>Perdu */
+    protected $devisEtat; /* 0=>Encours, 1=>Converti en BDC, 2-3-4 => Motifs de perte */
     protected $devisPdvId;
     protected $devisCollaborateurId;
     protected $devisCollaborateur;

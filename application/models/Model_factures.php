@@ -61,10 +61,28 @@ class Model_factures extends MY_model {
         return $this->retourne($query, $type, self::classe);
     }
 
-    public function delete(Facture $facture) {
-        $this->db->where('factureId', $facture->getFactureId())
-                ->delete($this->table);
-        return $this->db->affected_rows();
+    public function chiffresClientsPro($where = array()) {
+        return $this->db->select('c.clientId AS clientId, c.clientRaisonSociale AS raisonSociale, SUM(f.factureTotalHT) AS chiffreAffaire')
+                        ->from($this->table . ' f')
+                        ->join('clients c', 'c.clientId = f.factureClientId')
+                        ->where('f.facturePdvId', $this->session->userdata('loggedPdvId'))
+                        ->where('c.clientType', 2)
+                        ->where($where)
+                        ->group_by('c.clientId')
+                        ->order_by('chiffreAffaire DESC')
+                        ->get()
+                        ->result();
+    }
+
+    public function chiffresClientsParticuliers($where = array()) {
+        return $this->db->select('SUM(f.factureTotalHT) AS chiffreAffaire')
+                        ->from($this->table . ' f')
+                        ->join('clients c', 'c.clientId = f.factureClientId')
+                        ->where('f.facturePdvId', $this->session->userdata('loggedPdvId'))
+                        ->where('c.clientType', 1)
+                        ->where($where)
+                        ->get()
+                        ->result();
     }
 
     public function getFactureById($factureId, $type = 'object') {

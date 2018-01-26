@@ -9,6 +9,7 @@
 class Cloture {
 
     protected $clotureId;
+    protected $cloturePdvId;
     protected $clotureDate;
     protected $clotureType;
     protected $clotureMontant;
@@ -31,6 +32,14 @@ class Cloture {
         $security = new Token();
         $chaine = $this->clotureDate . $this->clotureMontant . $this->clotureType;
         $this->clotureSecure = $security->verifyToken($chaine, $this->clotureToken);
+    }
+
+    function getCloturePdvId() {
+        return $this->cloturePdvId;
+    }
+
+    function setCloturePdvId($cloturePdvId) {
+        $this->cloturePdvId = $cloturePdvId;
     }
 
     function getClotureId() {
@@ -72,6 +81,7 @@ class Cloture {
     function setClotureToken($clotureToken) {
         $this->clotureToken = $clotureToken;
     }
+
     function getClotureSecure() {
         return $this->clotureSecure;
     }
@@ -79,6 +89,5 @@ class Cloture {
     function setClotureSecure($clotureSecure) {
         $this->clotureSecure = $clotureSecure;
     }
-
 
 }

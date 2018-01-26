@@ -345,6 +345,11 @@ class Ventes extends My_Controller {
             );
             $bdc = new Bdc($dataBdc);
             $this->managerBdc->ajouter($bdc);
+
+            /* Modification de l'etat du devis */
+            $devis = $this->managerDevis->getDevisById($this->session->userdata('venteDevisId'));
+            $devis->setDevisEtat(1);
+            $this->managerDevis->editer($devis);
         endif;
 
         /* On enregistre les TVA pour le Bdc */
@@ -382,7 +387,6 @@ class Ventes extends My_Controller {
         if ($bdc->getBdcArticles()):
             foreach ($bdc->getBdcArticles() as $a):
                 if (!in_array($a->getArticleId(), $newArticles)):
-                    log_message('error', __CLASS__ . '/' . __FUNCTION__ . ' => ' . 'delete');
                     $this->managerBdcarticles->delete($a);
                 endif;
             endforeach;
@@ -411,6 +415,21 @@ class Ventes extends My_Controller {
             echo json_encode(array('type' => 'success'));
             exit;
         endif;
+    }
+
+    public function reanimateBdc() {
+
+        if (!$this->form_validation->run('getBdc')) :
+            echo json_encode(array('type' => 'error', 'message' => validation_errors()));
+            exit;
+        endif;
+
+        $bdc = $this->managerBdc->getBdcById($this->input->post('bdcId'));
+        $bdc->setBdcDelete(0);
+        $this->managerBdc->editer($bdc);
+
+        echo json_encode(array('type' => 'success'));
+        exit;
     }
 
     public function sendBdcByEmail() {

@@ -4,8 +4,8 @@ SetEnv REGISTER_GLOBALS 0
 RewriteEngine on
 RewriteBase /
 
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://cx.carreauximportnegoce.fr/$1 [R=301,L]
+#RewriteCond %{HTTPS} off
+#RewriteRule ^(.*)$ https://cx.carreauximportnegoce.fr/$1 [R=301,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

@@ -3,60 +3,11 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class clotures extends CI_Controller {
-
-    //const tauxTVA = 0.2;
-    const anneeBase = 2017;
+class cron extends CI_Controller {
 
     public function __construct() {
 
         parent::__construct();
-        $this->view_folder = strtolower(__CLASS__) . '/';
-
-        if (!$this->ion_auth->logged_in()) :
-            redirect('secure/login');
-        endif;
-    }
-
-    public function liste($annee = null, $mois = null, $jour = null) {
-
-        $where = array();
-        if ($annee):
-            if (!$mois):
-                $where['clotureDate >='] = mktime(0, 0, 0, 01, 01, $annee);
-                $where['clotureDate <='] = mktime(23, 59, 59, 12, 31, $annee);
-                $where['clotureType'] = 2;
-            else:
-                $where['clotureDate >='] = mktime(0, 0, 0, $mois, 01, $annee);
-                $where['clotureDate <='] = mktime(23, 59, 59, $mois, date('t', mktime(0, 0, 0, $mois, 1, $annee)), $annee);
-                $where['clotureType'] = 1;
-            endif;
-        else:
-            $where['clotureType'] = 3;
-        endif;
-        $clotures = $this->managerClotures->liste($where);
-        //log_message('error', __CLASS__ . '/' . __FUNCTION__ . ' => ' . print_r($clotures, 1));
-
-        if ($jour):
-            $ventes = $this->managerVentes->liste(array('venteEtat' => 2, 'venteDate >=' => mktime(0, 0, 0, $mois, $jour, $annee), 'venteDate <=' => mktime(23, 59, 59, $mois, $jour, $annee)));
-            if (!empty($ventes)):
-                foreach ($ventes as $v)
-                    $v->hydrateReglement();
-            endif;
-        else:
-            $ventes = null;
-        endif;
-
-        $data = array(
-            'clotures' => $clotures,
-            'ventes' => $ventes,
-            'anneeBase' => self::anneeBase,
-            'title' => 'Look&Soins',
-            'description' => '',
-            'keywords' => '',
-            'content' => $this->view_folder . __FUNCTION__
-        );
-        $this->load->view('template/content', $data);
     }
 
     /* Cloture une journée, un mois et une année */
