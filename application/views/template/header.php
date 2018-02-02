@@ -53,7 +53,7 @@
             <div class="container-fluid">
 
                 <div style="position:absolute; top:52px; right:20px;">
-                    <label class="label label-default">Version 2.0.3</label>
+                    <label class="label label-default">Version 2.0.4</label>
                 </div>
 
                 <nav class="navbar navbar-violet-light" role="navigation" id="navHeader">

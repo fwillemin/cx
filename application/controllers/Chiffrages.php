@@ -194,6 +194,7 @@ class Chiffrages extends My_Controller {
         endif;
 
         /* On enregistre les TVA pour le Devis */
+        $this->managerDevistva->deleteTvaByDevisId($devis->getDevisId());
         if ($this->session->userdata('venteExonerationTVA') == 0) :
             foreach ($this->session->userdata('venteTVA') as $taux => $montant) :
                 $dataTVA = array('tvaDevisId' => $devis->getDevisId(), 'tvaTaux' => $taux, 'tvaMontant' => $montant);

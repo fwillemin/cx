@@ -228,7 +228,7 @@
                                 <td colspan="8">
                                     <div class="btn-group btn-group-sm pull-right">
                                         <button type="submit" class="btn btn-warning" id="btnAddArticleSubmit">Ajouter</button>
-                                        <button class="btn btn-danger tooltipOk" title="Annuler la modification" data-placement="bottom" id="btnAddArticleReset" style="display:none;"><i class="fas fa-close"></i></button>
+                                        <button class="btn btn-danger tooltipOk" title="Annuler la modification" data-placement="bottom" id="btnAddArticleReset" style="display:none;"><i class="fas fa-times"></i></button>
                                     </div>
                                 </td>
                             </tr>
